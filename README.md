@@ -1,6 +1,6 @@
-# RISE homepage
+# RISE — original Framer template in React
 
-A responsive React + Vite homepage adapted from the supplied RISE Framer template. Includes a live canvas particle landscape, staggered RISE entrance, glass details, mobile navigation, keyboard-accessible process tabs, FAQs, and a local project-brief download dialog.
+This homepage uses the supplied template's original structure, CSS, fonts, images, content, section order and responsive variants. The earlier redesign has been replaced.
 
 ## Run
 
@@ -9,24 +9,19 @@ npm install
 npm run dev
 ```
 
-## Build
+`npm run build` creates `dist/`. `npm run preview` serves the production build.
 
-```sh
-npm run build
-npm run preview
-```
+## Files
 
-The production output is `dist/`.
+- `src/template.json`: original page structure rendered as React elements, without an iframe or a dependency on Framer's JavaScript runtime.
+- `src/template.css`: original styles, including desktop, tablet and phone layouts.
+- `src/main.jsx`: React service accordions, FAQs, mobile navigation, reveals and hero motion.
+- `src/styles.css`: interaction transitions and the originally requested logo and RISE entrance.
+- `public/template-assets/`: locally hosted original images and fonts.
+- `scripts/import-template.py`: importer for `../reference-latest.html`. Requires Python BeautifulSoup and tinycss2; only needed to import an updated snapshot.
 
-## Content and assets
+The top-left logo is the vector recreation of the supplied image from the first implementation. The green hero motion gently displaces the original image. Reduced-motion preferences retain the original static artwork.
 
-- Main content and booking destination: `src/main.jsx`.
-- Responsive layouts and animation: `src/styles.css`.
-- `public/rise-logo.svg` is a clean vector recreation of the user-provided black-and-copper logo. Replace it with the original transparent brand asset if available.
-- Hero reference artwork comes from the supplied Framer template. The moving foreground is generated in a canvas; it is not a video.
-- Geist is served locally. The template’s original booking destination is retained until a final company contact URL is supplied.
-- The project brief form only downloads a text file. It does not submit, store, or send information to a server.
+This is homepage-only. Links to other pages retain their original destinations on the user's Framer website. No new contact forms, rewritten copy, or extra sections are introduced.
 
-## Accessibility and motion
-
-System reduced-motion preferences are respected. The hero includes an animation pause control. Animation stops rendering while the hero is offscreen or the tab is hidden, and canvas resolution and frame rates are capped for mobile devices. Navigation, process tabs, FAQs, and the modal support keyboard use.
+Source parity is not device-by-device visual verification. Browser visual QA depends on the available browser connection.
