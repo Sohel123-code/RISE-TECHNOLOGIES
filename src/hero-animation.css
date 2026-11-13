@@ -1,0 +1,19 @@
+.motion-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.hero-rotator{position:relative;width:100%;font-family:Geist,Arial,sans-serif;font-size:22px;line-height:1.4;letter-spacing:-.035em;font-weight:500;color:#fff;text-align:center;margin:17px 0 10px}
+.rotator-grid{display:grid;justify-items:center;align-items:center;min-height:2.8em;padding:0 25px}
+.rotator-measure,.rotator-word{grid-area:1/1;width:100%;text-align:center}
+.rotator-measure{visibility:hidden;pointer-events:none}
+.rotator-token{display:inline-block;white-space:nowrap}
+.rotator-letter{display:inline-block;animation:rotator-enter .45s ease-out both;animation-delay:calc(var(--character)*60ms);animation-play-state:paused}
+.hero-rotator[data-running=true] .rotator-letter{animation-play-state:running}
+.hero-rotator[data-phase=exit] .rotator-letter{animation-name:rotator-exit;animation-duration:.35s;animation-timing-function:ease-in;animation-delay:calc(var(--character)*36ms)}
+.rotator-control{position:absolute;right:0;top:50%;translate:0 -50%;border:1px solid #ffffff24;border-radius:50%;width:25px;height:25px;background:#ffffff08;color:#c3cbbb;display:grid;place-items:center;cursor:pointer;transition:background .2s}
+.rotator-control:hover{background:#ffffff18}
+.hero-support-copy{font-family:Geist,Arial,sans-serif;color:#b6b6b6;font-size:16px;line-height:1.6;letter-spacing:-.02em;text-align:center;max-width:540px;margin:0 auto!important}
+@keyframes rotator-enter{from{filter:blur(8px);opacity:0}to{filter:blur(0);opacity:1}}
+@keyframes rotator-exit{from{filter:blur(0);opacity:1}to{filter:blur(8px);opacity:0}}
+.hero-rotator[data-reduced=true] .rotator-letter{animation:none;filter:none;opacity:1}
+
+@media(max-width:809.98px){.hero-rotator{font-size:19px;margin-top:20px}.hero-support-copy{font-size:14px;max-width:440px}}
+@media(max-width:420px){.hero-rotator{font-size:17px}.hero-support-copy{font-size:13px;padding:0 14px}.rotator-grid{padding:0 23px}.rotator-control{right:4px}}
+@media(prefers-reduced-motion:reduce){.rotator-letter{animation:none!important;filter:none!important;opacity:1!important}.rotator-control{display:none}}
