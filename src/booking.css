@@ -16,3 +16,7 @@
 @media(max-width:809.98px){.booking-page{grid-template-columns:1fr;padding:125px 22px 75px;gap:40px}.booking-intro h1{font-size:46px}.booking-intro>p{font-size:14px}.booking-intro ul{display:none}.booking-availability{margin-bottom:0}.booking-panel{padding:25px 20px}}
 @media(max-width:360px){.booking-intro h1{font-size:38px}.booking-page{padding-left:16px;padding-right:16px}}
 @media(prefers-reduced-motion:reduce){.booking-page *{transition:none!important}}
+
+.booking-email{display:flex;align-items:center;gap:10px;color:#d2e1be;text-decoration:none;font-size:12px;line-height:1.5;margin:-15px 0 32px;overflow-wrap:anywhere}.booking-email svg{flex:none}.booking-email:hover{color:#f1f8e6}.booking-honey{display:none}.booking-privacy{font-size:10px;line-height:1.7;color:#8f9b82;margin:0 0 20px}.booking-privacy a{color:#c7dda8;text-underline-offset:3px}.booking-status[data-state=error]{color:#efb3a3}.booking-status[data-state=success]{padding:13px;border:1px solid #c7dda82a;border-radius:7px;background:#c7dda80b;color:#d7e7c1}.booking-panel button:disabled{cursor:wait;opacity:.65;translate:none}.booking-spinner{animation:booking-spin 1s linear infinite}@keyframes booking-spin{to{transform:rotate(360deg)}}
+@media(max-width:809.98px){.booking-email{margin:20px 0 0;font-size:11px}}
+@media(prefers-reduced-motion:reduce){.booking-spinner{animation:none}}

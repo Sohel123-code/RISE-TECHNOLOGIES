@@ -9,7 +9,7 @@ function pageEntries(){
   const pages=[
     ['what-we-do','What We Do \u2014 RISE','Full-stack development, data analytics, AI and machine learning, UI/UX design, and quality assurance for students and businesses.'],
     ['team','Our Team \u2014 RISE','Meet the six people behind RISE: AI, machine learning, quality assurance, full stack development, research and data analysis.'],
-    ['book-a-call','Book a Call \u2014 RISE','Prepare your project conversation with RISE. Call scheduling is coming soon.'],
+    ['book-a-call','Book a Call \u2014 RISE','Send RISE a project enquiry. Our team will reply to your email to discuss your idea and arrange a call.'],
   ];
   return {name:'page-entries',configResolved(config){output=path.resolve(config.root,config.build.outDir);},async closeBundle(){
     const source=await readFile(path.join(output,'index.html'),'utf8');

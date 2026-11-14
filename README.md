@@ -73,9 +73,13 @@ The interaction suite compares the rendered header and footer DOM between routes
 
 ## Book a call
 
-All booking links now open the local `/book-a-call` route with the common header and footer. Scheduling and email are intentionally unconnected. The page clearly says scheduling is coming soon; its form saves only a project draft in this browser's local storage and never sends a request or claims a call was booked. There is no email field. `vite.config.js` emits physical HTML entries for Team and Book a call so direct URLs work on static hosts.
+All booking links open `/book-a-call` with the common header and green footer. The enquiry form requires a name, reply email, service, and message, and includes an optional contact number that is sent with the enquiry. It submits through [FormSubmit](https://formsubmit.co/documentation) to `risetechnologies285@gmail.com`. The visitor's address is set as Reply-To; the form does not impersonate their email account. Enquiry emails use FormSubmit's boxed template, with a RISE/service/client subject and ordered client details, contact number, service, project brief, follow-up note, source, and company signature. FormSubmit controls the outer email layout and branding; custom HTML or logo styling is not supplied by this integration. It requests a conversation, not a confirmed calendar booking.
 
-Checks cover shared chrome across all three routes, local booking destinations, draft restoration and saving, invalid stored data, and the Team hero/portrait transition sequence. Run `npm test` and `npm run build`. Real-device visual and GPU performance verification is separate from these DOM checks.
+**One-time setup required:** submit the form from the actual website, then open the FormSubmit activation email in `risetechnologies285@gmail.com` (check spam) and confirm the address. Submit a test again after activation and verify receipt and Reply-To before treating delivery as live. No Gmail password or API key is required. The local build does not prove mailbox delivery; the hosting deployment must also contain this version.
+
+`src/bookingApi.js` holds the fixed recipient, payload validation, and provider request. The page keeps the form in place, prevents duplicate clicks while sending, times out after 20 seconds, retains details after a failed/uncertain request, and only shows submission success after an explicit successful provider response. A honeypot filters basic automated submissions; provider abuse controls are not disabled. The direct company email link remains available. FormSubmit processes the submitted information; a disclosure links its privacy terms. Client contact details are not newly saved in browser storage. Legacy local drafts are restored where possible and removed after a successful submission.
+
+`node scripts/check-booking.mjs` checks validation, destination and Reply-To, success/error/activation responses, failed-request recovery, and duplicate prevention using mocked requests; tests never send real client email. Run `npm test` and `npm run build` for all routes.
 
 
 ## What we do
@@ -83,3 +87,10 @@ Checks cover shared chrome across all three routes, local booking destinations, 
 `/what-we-do` introduces five services: full-stack development, data analytics, AI and machine learning, UI/UX design, and quality assurance. The hero leads into a reversible scroll story with five distinct HTML/SVG illustrations, service details, a progress indicator, and keyboard-accessible chapter controls. Decorative animations only run for the active chapter while the page is visible. Short viewports and reduced-motion preferences use normal document flow. Illustrations are conceptual, not client results or measured performance claims.
 
 The shared navigation and footer link to this page, and its full green footer is rendered by the common site layout. `vite.config.js` emits its direct-access static entry. `scripts/check-services.mjs` covers sequence behavior, navigation, responsive fallbacks, and reduced motion.
+
+
+## Production domain
+
+The official website is `https://www.risetechnologies.tech`. Enquiry emails include this company website and pass the submitting page's origin plus `/book-a-call` through FormSubmit's `_url` field. On the live domain this is `https://www.risetechnologies.tech/book-a-call`; local tests are explicitly identified by their local origin. Query parameters and fragments are not forwarded.
+
+Deploy the output of `npm run build` (`dist/`) to the production host, including its `book-a-call/index.html` entry. After deploying, submit a test from the live HTTPS page, complete any FormSubmit confirmation requested for that form, and check the company inbox and spam folder. This configuration sets the website source; FormSubmit remains the email delivery service and the recipient remains `risetechnologies285@gmail.com`. Sending as an address at `@risetechnologies.tech` would need a verified domain email service.
