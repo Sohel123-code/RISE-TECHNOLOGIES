@@ -4,13 +4,14 @@ import {useEffect,useState} from 'react';
 // mobile browser toolbars expand/collapse. Short screens use natural flow.
 export function useCompactViewport(mobileMinimum,desktopMinimum=600){
   const compact=height=>height<(window.innerWidth<810?mobileMinimum+(window.innerWidth<375?60:0):desktopMinimum);
-  const [value,setValue]=useState(()=>compact(window.innerHeight));
+  const availableHeight=()=>window.innerHeight-(window.innerWidth<810?72:0);
+  const [value,setValue]=useState(()=>compact(availableHeight()));
   useEffect(()=>{
     const probe=document.createElement('div');
     probe.setAttribute('aria-hidden','true');
-    probe.style.cssText='position:fixed;top:0;left:0;width:0;height:100vh;height:calc(100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom));visibility:hidden;pointer-events:none;overflow:hidden;';
+    probe.style.cssText='position:fixed;top:0;left:0;width:0;height:100vh;height:calc(100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - var(--mobile-nav-height,0px));visibility:hidden;pointer-events:none;overflow:hidden;';
     document.body.appendChild(probe);
-    const measure=()=>setValue((probe.clientHeight||window.innerHeight)<(window.innerWidth<810?mobileMinimum+(window.innerWidth<375?60:0):desktopMinimum));
+    const measure=()=>setValue((probe.clientHeight||availableHeight())<(window.innerWidth<810?mobileMinimum+(window.innerWidth<375?60:0):desktopMinimum));
     const observer=new ResizeObserver(measure);observer.observe(probe);
     window.addEventListener('resize',measure);measure();
     return()=>{observer.disconnect();window.removeEventListener('resize',measure);probe.remove();};

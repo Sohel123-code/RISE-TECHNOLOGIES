@@ -13,6 +13,8 @@ import './styles.css';
 import './hero-animation.css';
 import './responsive.css';
 import SmokeCursor from './SmokeCursor';
+import MobileNavigation from './MobileNavigation';
+import './mobile-app.css';
 
 // Original markup, classes, text, inline styles and assets are preserved.
 // This layer restores React interactions without redesigning the template.
@@ -176,6 +178,6 @@ function HeroMotion() {
 }
 
 function Homepage(){useHomepageMotion();return <>{homeTemplate.map(node=><TemplateNode key={node.key} node={node}/>)}</>;}
-export function App(){useScrollEntrance();const team=/^\/team(?:\/|$)/.test(window.location.pathname),booking=/^\/book-a-call(?:\/|$)/.test(window.location.pathname),services=/^\/what-we-do(?:\/|$)/.test(window.location.pathname);return <div id="site-layout"><SiteHeader Renderer={TemplateNode}/>{team?<TeamPage/>:services?<ServicesPage/>:booking?<BookCallPage/>:<Homepage/>}<SiteFooter Renderer={TemplateNode}/></div>;}
+export function App(){useScrollEntrance();const team=/^\/team(?:\/|$)/.test(window.location.pathname),booking=/^\/book-a-call(?:\/|$)/.test(window.location.pathname),services=/^\/what-we-do(?:\/|$)/.test(window.location.pathname);return <div id="site-layout"><SiteHeader Renderer={TemplateNode}/>{team?<TeamPage/>:services?<ServicesPage/>:booking?<BookCallPage/>:<Homepage/>}<SiteFooter Renderer={TemplateNode}/><MobileNavigation/></div>;}
 export const appRoot=createRoot(document.getElementById('root'));
 appRoot.render(<App/>);

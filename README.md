@@ -109,3 +109,12 @@ The Team and What we do introductions use the warp shader from the supplied [Ani
 The native pointer and all controls remain usable. Touch/coarse pointers and reduced motion disable the effect and release its textures; form fields do not emit smoke. The original 80% opacity, fluid density, and four-second fade are restored. Each canvas is positioned and clipped inside its hero, with pointer coordinates relative to that hero. Leaving the hero or scrolling clears the smoke immediately; Team portraits and service scenes disable it. The booking form, body sections, navigation, and footer have no smoke. Hidden tabs, blur, context loss, and unmount clear the simulation. Simulation, dye, and output resolutions have separate pixel budgets; pointer input is capped per frame. WebGL2/float framebuffer failures preserve the ordinary cursor. `ambient-effects.css` contains both effects' presentation. No runtime dependencies or remote scripts were added; the recording stays outside the published website.
 
 `scripts/check-ambient.mjs` instruments the rendering lifecycle to check motion gates, touch/input behavior, resource cleanup, context recovery, and the mobile pixel budget. Real-browser rendering and GPU performance still need visual/device verification.
+
+
+## Mobile app-style layout
+
+`MobileNavigation.jsx` adds one shared phone-only bottom tab bar for Home, What we do, Team, and Book a call, with a current-page marker and large tap targets. It hides and becomes inert while text fields are focused so it does not compete with the on-screen keyboard. Desktop navigation is unchanged.
+
+`mobile-app.css` adds a compact glass header, rounded controls, fluid hero typography, stacked homepage actions, shorter section spacing, safe-area gutters, and mobile form cards with 16px inputs. A reserved 72px navigation area plus the bottom safe area prevents content from sitting under the tab bar. Sticky Team and What we do stages use the remaining viewport height; `useCompactViewport` accounts for that space before choosing an animated story or natural-flow cards. Full team names remain readable, including the smaller Sesha Sai Ram line. Short and landscape layouts remain scrollable, and browser zoom is not disabled.
+
+Automated checks cover current-page links on all routes, field-focus hiding/restoring, and compact layout selection at phone sizes from 320x568 through 430x932 and landscape 768x540. These DOM checks do not measure real browser layout or guarantee compatibility with every physical device.

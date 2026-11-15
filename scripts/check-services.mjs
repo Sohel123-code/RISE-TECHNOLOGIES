@@ -33,7 +33,7 @@ try{
  assert.equal(document.querySelectorAll('[data-site-header]').length,1);assert.equal(document.querySelectorAll('[data-site-footer]').length,1);
  assert.equal(document.querySelectorAll('[data-site-footer] .framer-1gggnc9-container').length,3);
  assert.equal(new Set(scenes.map(scene=>scene.querySelector('.expert-art').className)).size,5,'Each service has its own illustration');
- Object.defineProperty(stage,'clientHeight',{configurable:true,get:()=>window.innerHeight});
+ Object.defineProperty(stage,'clientHeight',{configurable:true,get:()=>window.innerHeight-(window.innerWidth<810?72:0)});
  story.getBoundingClientRect=()=>({top:-window.scrollY,height:window.innerHeight*6.5,left:0,width:window.innerWidth});
  window.dispatchEvent(new window.Event('resize'));
  await until(()=>hero.style.getPropertyValue('--intro')==='1');
@@ -53,11 +53,13 @@ try{
  const end=lastScroll.top;
  stage.dispatchEvent(new window.KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true,cancelable:true}));assert.equal(lastScroll.top,end,'The story has a finite end');
  for(const type of ['wheel','touchmove']){const event=new window.Event(type,{bubbles:true,cancelable:true});stage.dispatchEvent(event);assert.equal(event.defaultPrevented,false,'Native scrolling remains enabled');}
- window.innerWidth=390;window.innerHeight=844;window.dispatchEvent(new window.Event('resize'));await settle();
+ window.innerWidth=430;window.innerHeight=932;window.dispatchEvent(new window.Event('resize'));await settle();
  assert.equal(page.dataset.static,'false','Tall phones retain the scroll story');
- window.innerHeight=667;window.dispatchEvent(new window.Event('resize'));await until(()=>page.dataset.static==='true'&&scenes.every(scene=>!scene.style.getPropertyValue('--scene-opacity')));
+ window.innerWidth=390;window.innerHeight=844;window.dispatchEvent(new window.Event('resize'));await until(()=>page.dataset.static==='true');
+ assert.equal(page.dataset.static,'true','The bottom navigation is included in the available story height');
+ for(const [width,height] of [[320,568],[360,640],[375,667],[390,390]]){window.innerWidth=width;window.innerHeight=height;window.dispatchEvent(new window.Event('resize'));await until(()=>page.dataset.static==='true'&&scenes.every(scene=>!scene.style.getPropertyValue('--scene-opacity')));}
  buttons[2].click();assert.equal(scrolledMember,'ai-ml','Short phones show ordinary scrollable content');
- window.innerHeight=844;window.dispatchEvent(new window.Event('resize'));await until(()=>page.dataset.static==='false');
+ window.innerWidth=430;window.innerHeight=932;window.dispatchEvent(new window.Event('resize'));await until(()=>page.dataset.static==='false');
  const reduced=preferences.get('(prefers-reduced-motion: reduce)');reduced.matches=true;reduced.listeners.forEach(fn=>fn());
  await until(()=>page.dataset.static==='true'&&scenes.every(scene=>scene.dataset.visible==='true'&&!scene.style.getPropertyValue('--scene-opacity')));
  assert.equal(story.dataset.running,'false');assert.equal(hero.inert,false);

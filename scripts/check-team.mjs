@@ -42,7 +42,7 @@ try{
   assert.equal(p.querySelector('img').getAttribute('src'),`/team/${slug}.jpeg`);assert.equal(p.querySelector('img').alt,name);
   await access(path.resolve('public/team',`${slug}.jpeg`));
  }
- Object.defineProperty(stage,'clientHeight',{configurable:true,get:()=>window.innerHeight});
+ Object.defineProperty(stage,'clientHeight',{configurable:true,get:()=>window.innerHeight-(window.innerWidth<810?72:0)});
  story.getBoundingClientRect=()=>({top:-window.scrollY,height:window.innerHeight*7.6,left:0,width:window.innerWidth});
  const opacity=p=>parseFloat(p.style.getPropertyValue('--person-opacity'));
  window.dispatchEvent(new window.Event('resize'));await settle();
@@ -75,8 +75,9 @@ try{
  assert.equal(page.dataset.static,'false','Portrait phones keep the animated story');
  window.innerHeight=390;window.dispatchEvent(new window.Event('resize'));await settle();
  assert.equal(page.dataset.static,'true','Short landscape screens use natural document flow');
+ for(const [width,height] of [[320,568],[360,640],[375,667],[768,540]]){window.innerWidth=width;window.innerHeight=height;window.dispatchEvent(new window.Event('resize'));await until(()=>page.dataset.static==='true');}
  index[2].click();assert.equal(scrolledMember,'member-m-deepak');
- window.innerHeight=844;window.dispatchEvent(new window.Event('resize'));await settle();
+ window.innerWidth=390;window.innerHeight=844;window.dispatchEvent(new window.Event('resize'));await settle();
  const reduced=preferences.get('(prefers-reduced-motion: reduce)');reduced.matches=true;reduced.listeners.forEach(fn=>fn());await settle();
  assert.equal(page.dataset.static,'true');assert.equal(page.dataset.reduced,'true');
  await until(()=>portraits.every(p=>p.style.getPropertyValue('--person-y')===''));

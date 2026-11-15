@@ -169,6 +169,12 @@ function chromeMarkup(selector){
 assert.equal(document.querySelectorAll('[data-site-header]').length,1);
 assert.equal(document.querySelectorAll('[data-site-footer]').length,1);
 const homeHeader=chromeMarkup('[data-site-header]'),homeFooter=chromeMarkup('[data-site-footer]');
+function checkMobileNavigation(route){
+ const nav=document.querySelector('.mobile-app-nav');assert.ok(nav);assert.equal(document.querySelectorAll('.mobile-app-nav').length,1);
+ assert.deepEqual([...nav.querySelectorAll('a')].map(a=>a.getAttribute('href')),['/','/what-we-do','/team','/book-a-call']);
+ assert.equal(nav.querySelectorAll('[aria-current="page"]').length,1);assert.equal(nav.querySelector('[aria-current="page"]').getAttribute('href'),route);
+}
+checkMobileNavigation('/');
 assert.equal(document.querySelectorAll('.site-smoke-cursor').length,1);
 assert.equal(document.querySelectorAll('.framer-siicqj[data-smoke-hero]>.site-smoke-cursor').length,1,'Home smoke is contained by the hero');
 assert.equal(document.querySelectorAll('.liquid-hero-background').length,0,'Home retains its original green artwork');
@@ -178,6 +184,7 @@ const teamDeadline=Date.now()+10000;
 while(!document.querySelector('.team-page')&&Date.now()<teamDeadline)await settle();
 await settle();
 assert.ok(document.querySelector('.team-page'));
+checkMobileNavigation('/team');
 assert.equal(document.querySelectorAll('.team-hero[data-smoke-hero]>.site-smoke-cursor').length,1);
 assert.equal(document.querySelectorAll('.site-smoke-cursor').length,1);
 assert.equal(document.querySelectorAll('.team-hero .liquid-hero-background').length,1);
@@ -191,6 +198,7 @@ assert.equal(document.querySelectorAll('[data-site-footer] a[href^="#"]').length
 dom.reconfigure({url:'http://localhost/what-we-do/'});
 appRoot.render(createElement(App,{key:'shared-services-check'}));await settle();await settle();
 assert.ok(document.querySelector('#expertise-main'));
+checkMobileNavigation('/what-we-do');
 assert.equal(document.querySelectorAll('.expertise-hero[data-smoke-hero]>.site-smoke-cursor').length,1);
 assert.equal(document.querySelectorAll('.site-smoke-cursor').length,1);
 assert.equal(document.querySelectorAll('.expertise-hero .liquid-hero-background').length,1);
@@ -206,6 +214,10 @@ dom.reconfigure({url:'http://localhost/book-a-call/'});
 appRoot.render(createElement(App,{key:'shared-booking-check'}));
 await settle();await settle();
 assert.ok(document.querySelector('#booking-main'));
+checkMobileNavigation('/book-a-call');
+const mobileNav=document.querySelector('.mobile-app-nav'),emailInput=document.querySelector('#call-email');
+emailInput.focus();await settle();assert.equal(mobileNav.dataset.editing,'true','Bottom navigation hides while typing in the form');assert.ok(mobileNav.hasAttribute('inert'));
+emailInput.blur();await settle();assert.equal(mobileNav.dataset.editing,'false','Bottom navigation returns after editing');assert.equal(mobileNav.hasAttribute('inert'),false);
 assert.equal(document.querySelectorAll('.booking-intro[data-smoke-hero]>.site-smoke-cursor').length,1);
 assert.equal(document.querySelectorAll('.booking-panel .site-smoke-cursor,[data-site-footer] .site-smoke-cursor,[data-site-header] .site-smoke-cursor').length,0,'Form and shared chrome have no smoke');
 assert.equal(document.querySelectorAll('.site-smoke-cursor').length,1);
