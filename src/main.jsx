@@ -11,6 +11,8 @@ import { AnimatedTextRotator } from './AnimatedTextRotator';
 import './template.css';
 import './styles.css';
 import './hero-animation.css';
+import './responsive.css';
+import SmokeCursor from './SmokeCursor';
 
 // Original markup, classes, text, inline styles and assets are preserved.
 // This layer restores React interactions without redesigning the template.
@@ -59,8 +61,8 @@ function Navigation({node}) {
     const close=e=>{if(e.key==='Escape'){setOpen(false);trigger?.focus();}};
     const outside=e=>{if(!e.target.closest?.('.framer-v-hjvsdp'))setOpen(false);};
     const resize=()=>{if(window.innerWidth>=810)setOpen(false);};
-    window.addEventListener('keydown',close);document.addEventListener('pointerdown',outside);window.addEventListener('resize',resize);
-    return()=>{window.removeEventListener('keydown',close);document.removeEventListener('pointerdown',outside);window.removeEventListener('resize',resize);};
+    window.addEventListener('keydown',close);document.addEventListener('pointerdown',outside);document.addEventListener('focusin',outside);window.addEventListener('resize',resize);
+    return()=>{window.removeEventListener('keydown',close);document.removeEventListener('pointerdown',outside);document.removeEventListener('focusin',outside);window.removeEventListener('resize',resize);};
   },[open]);
   return <NavContext.Provider value={{open,setOpen,phone}}><Element node={node}/></NavContext.Provider>;
 }
@@ -73,9 +75,9 @@ function Element({node,override={}}) {
   const item=useContext(ItemContext), faq=useContext(FaqContext), nav=useContext(NavContext);
   const props={...node.props,...override};
   props.style={...node.props.style,...override.style};
-  if(/^https:\/\/tidy-airport-868077\.framer\.app\/book-a-call\/?$/.test(props.href||'')){props.href='/book-a-call';delete props.target;}
   if(props.href==='/book-a-call'&&/^\/book-a-call(?:\/|$)/.test(window.location.pathname))props['aria-current']='page';
   let children=childrenOf(node);
+  if(has(node,'framer-siicqj')){props['data-smoke-hero']='';children.unshift(<SmokeCursor key="hero-smoke"/>);}
   if(has(node,'framer-hakzju'))children=[<AnimatedTextRotator key="hero-rotator"/>,<p key="hero-support" className="hero-support-copy">We help students learn, build and present projects — and create custom solutions for everyday business needs.</p>];
   if((node.reveal&&!stationaryContainers.some(name=>has(node,name)))||scrollGroups.some(name=>has(node,name))){
     props['data-scroll-rise']='';

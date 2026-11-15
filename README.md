@@ -22,7 +22,7 @@ npm run dev
 
 The top-left logo is the vector recreation of the supplied image from the first implementation. The green hero motion gently displaces the original image. Reduced-motion preferences retain the original static artwork.
 
-The site includes the homepage, `/team`, and `/book-a-call` pages. Other unimplemented pages retain their original destinations on the user's Framer website. The hero phrases describe RISE's student assistance and software development services.
+The site includes the homepage, `/team`, and `/book-a-call` pages. All template page links use local RISE destinations. The unbuilt Articles link is removed, and What we do replaces the old Case Studies entry. The hero phrases describe RISE's student assistance and software development services.
 
 Source parity is not device-by-device visual verification. Browser visual QA depends on the available browser connection.
 
@@ -49,14 +49,14 @@ The original template CSS and JSON remain unchanged. The external Framer compone
 
 `/team` and `/team/` render the six supplied portraits in this order:
 
-1. Md Khaja Eshaq ? AI Engineer ? image 1
-2. M Tejeshwar ? ML Engineer ? image 2
-3. M Deepak ? QA Engineer ? image 3
-4. M Sai Kiran ? Full Stack Developer ? image 4
-5. M Trilok ? ML Engineer ? image 5
-6. K Jithendra ? Research and Data Analyst ? image 6
+1. Mohamed Khaja Eshaq ? AI Engineer ? image 1
+2. Mamidi Tejeshwar ? ML Engineer ? image 2
+3. Maddineni Deepak ? QA Engineer ? image 3
+4. Miriyala Sai Kiran ? Full Stack Developer ? image 4
+5. Mabbu Trilok ? ML Engineer ? image 5
+6. Kottala Jithendra Sesha Sai Ram ? Research and Data Analyst ? image 6
 
-The Team page begins with "Meet the people behind RISE." Native scrolling fades the hero and brings each portrait forward from depth with the person's name and role. Portraits overlap through a fade, in the supplied order, and the last person leads into the shared footer. Scrolling back reverses the sequence. Index buttons and arrow/Home/End keys navigate the story (Home returns to the introduction). Portrait phones keep the animation; short landscape screens and reduced-motion preferences show all six portraits in normal document flow. No biographies or social profiles have been invented.
+The Team page begins with "Meet the people behind RISE." Native scrolling fades the hero and brings each portrait forward from depth with the person's name and role. Portraits overlap through a fade, in the supplied order, and the last person leads into the shared footer. Scrolling back reverses the sequence. Index buttons and arrow/Home/End keys navigate the story (Home returns to the introduction). Portrait phones keep the animation; short landscape screens and reduced-motion preferences show all six portraits in normal document flow. Full names are used in headings, image descriptions, and navigation. Jithendra's "Sesha Sai Ram" suffix uses a smaller line. No biographies or social profiles have been invented.
 
 Files: `src/TeamPage.jsx`, `src/teamData.js`, `src/team.css`, `public/team/`. Original JPEG bytes are preserved. `vite.config.js` emits `dist/team/index.html` with Team-specific metadata for direct static-host access. Desktop and mobile homepage navigation link to `/team`.
 
@@ -94,3 +94,18 @@ The shared navigation and footer link to this page, and its full green footer is
 The official website is `https://www.risetechnologies.tech`. Enquiry emails include this company website and pass the submitting page's origin plus `/book-a-call` through FormSubmit's `_url` field. On the live domain this is `https://www.risetechnologies.tech/book-a-call`; local tests are explicitly identified by their local origin. Query parameters and fragments are not forwarded.
 
 Deploy the output of `npm run build` (`dist/`) to the production host, including its `book-a-call/index.html` entry. After deploying, submit a test from the live HTTPS page, complete any FormSubmit confirmation requested for that form, and check the company inbox and spam folder. This configuration sets the website source; FormSubmit remains the email delivery service and the recipient remains `risetechnologies285@gmail.com`. Sending as an address at `@risetechnologies.tech` would need a verified domain email service.
+
+
+## Mobile refinement
+
+`src/responsive.css` adds safe-area spacing, scrollable menus for landscape phones, larger touch controls, readable form inputs, contact text wrapping, and narrower homepage card layouts. `useCompactViewport.js` uses stable viewport measurements and normal document flow on short screens so Team and What we do content stays reachable. DOM interaction checks and the production build pass; these do not establish compatibility with every physical device.
+
+## Liquid heroes and green smoke
+
+The Team and What we do introductions use the warp shader from the supplied [AnimatedLiquidBackground component](https://framer.com/m/AnimatedLiquidBackground-Prod-vIhm.js@ghH1aHLmGZ0iE7qXDFVk), mounted locally in `LiquidHeroBackground.jsx` with RISE's olive/sage palette and a dark text scrim. `liquidShader.js` records the shader source. This effect is limited to these two heroes. It pauses outside the introduction, offscreen, in hidden tabs, and for reduced-motion preferences. WebGL2 failures fall back to green CSS gradients. Rendering is capped at 30 fps, with a lower pixel budget and fewer swirl iterations on phones.
+
+`SmokeCursor.jsx` supplies fluid smoke inside each page's hero only, using the November 15 recording as its movement reference. `fluidSmoke.js` replaces the original blurred particles with a local WebGL2 fluid simulation: pointer momentum, pressure projection, advection, and vorticity confinement at strength 25 produce connected plumes and rolling wisps. Sage highlights and darker olive folds match RISE; screen blending preserves the page beneath. This is a recreation from the video, not the original Framer cursor component.
+
+The native pointer and all controls remain usable. Touch/coarse pointers and reduced motion disable the effect and release its textures; form fields do not emit smoke. The original 80% opacity, fluid density, and four-second fade are restored. Each canvas is positioned and clipped inside its hero, with pointer coordinates relative to that hero. Leaving the hero or scrolling clears the smoke immediately; Team portraits and service scenes disable it. The booking form, body sections, navigation, and footer have no smoke. Hidden tabs, blur, context loss, and unmount clear the simulation. Simulation, dye, and output resolutions have separate pixel budgets; pointer input is capped per frame. WebGL2/float framebuffer failures preserve the ordinary cursor. `ambient-effects.css` contains both effects' presentation. No runtime dependencies or remote scripts were added; the recording stays outside the published website.
+
+`scripts/check-ambient.mjs` instruments the rendering lifecycle to check motion gates, touch/input behavior, resource cleanup, context recovery, and the mobile pixel budget. Real-browser rendering and GPU performance still need visual/device verification.

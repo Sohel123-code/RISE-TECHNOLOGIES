@@ -6,7 +6,7 @@ import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {teamScrollPosition,teamPortraitPose,teamHeroPose,TEAM_SCROLL_END} from '../src/teamData.js';
 
-const expected=[['Md Khaja Eshaq','AI Engineer','md-khaja-eshaq'],['M Tejeshwar','ML Engineer','m-tejeshwar'],['M Deepak','QA Engineer','m-deepak'],['M Sai Kiran','Full Stack Developer','m-sai-kiran'],['M Trilok','ML Engineer','m-trilok'],['K Jithendra','Research and Data Analyst','k-jithendra']];
+const expected=[['Mohamed Khaja Eshaq','AI Engineer','md-khaja-eshaq'],['Mamidi Tejeshwar','ML Engineer','m-tejeshwar'],['Maddineni Deepak','QA Engineer','m-deepak'],['Miriyala Sai Kiran','Full Stack Developer','m-sai-kiran'],['Mabbu Trilok','ML Engineer','m-trilok'],['Kottala Jithendra Sesha Sai Ram','Research and Data Analyst','k-jithendra']];
 const dom=new JSDOM('<!doctype html><html><head><title>Home</title><meta name="description" content="Home description"></head><body><div id="root"></div></body></html>',{url:'http://localhost/team',pretendToBeVisual:true});
 globalThis.window=dom.window;globalThis.document=dom.window.document;globalThis.HTMLElement=dom.window.HTMLElement;
 Object.defineProperty(globalThis,'navigator',{value:dom.window.navigator,configurable:true});
@@ -35,6 +35,7 @@ try{
  const portraits=[...document.querySelectorAll('.team-portrait')],index=[...document.querySelectorAll('.team-index button')];
  assert.equal(portraits.length,6);assert.equal(index.length,6);
  assert.equal(new Set(portraits.map(p=>p.querySelector('img').src)).size,6);
+ assert.equal(portraits[5].querySelector('h2 .team-name-suffix').textContent,'Sesha Sai Ram','Jithendra retains his complete name with a smaller suffix');
  for(let i=0;i<6;i++){
   const [name,role,slug]=expected[i],p=portraits[i];
   assert.equal(p.querySelector('h2').textContent,name);assert.equal(p.querySelector('.team-role').textContent,role);

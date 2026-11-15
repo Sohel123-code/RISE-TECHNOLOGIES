@@ -1,0 +1,63 @@
+/* Shared mobile refinements; original desktop template remains the baseline. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;--mobile-left:max(16px,env(safe-area-inset-left));--mobile-right:max(16px,env(safe-area-inset-right))}
+.booking-page,.booking-page *{box-sizing:border-box}
+.booking-page{width:100%;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.booking-page>*,.booking-email>span,.team-person-copy,.expertise-copy{min-width:0}
+.booking-email>span,.booking-status{overflow-wrap:anywhere}
+.team-page,.expertise-page{overflow-wrap:break-word}
+.booking-panel input,.booking-panel textarea{scroll-margin-block:120px 40px}
+@media(max-width:809.98px){
+  html{scroll-padding-top:calc(100px + env(safe-area-inset-top))}
+  .site-header-template .framer-A5Hxr{width:100%!important;box-sizing:border-box;padding:calc(16px + env(safe-area-inset-top)) var(--mobile-right) 16px var(--mobile-left)}
+  .site-header-template .framer-s8wikm{min-width:0}
+  .site-header-template .framer-igo78h{min-width:48px;min-height:44px;box-sizing:border-box}
+  .template-brand{min-height:44px;box-sizing:border-box}
+  .template-mobile-links{top:calc(100% + 16px);left:calc(-1 * var(--mobile-left));right:calc(-1 * var(--mobile-right));box-sizing:border-box;gap:6px;padding:16px var(--mobile-right) max(20px,env(safe-area-inset-bottom)) var(--mobile-left);max-height:calc(100vh - 76px - env(safe-area-inset-top));max-height:calc(100svh - 76px - env(safe-area-inset-top));overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+  .template-mobile-links>a{display:flex;align-items:center;box-sizing:border-box;min-height:48px;width:100%;padding:10px 12px;flex:none}
+  .template-mobile-links .mobile-book{justify-content:center;margin-top:6px}
+  .site-footer-template .framer-75sN2{min-height:44px;align-items:center}
+  .site-footer-template .framer-1eiq44d{padding-left:var(--mobile-left);padding-right:var(--mobile-right);padding-bottom:max(24px,env(safe-area-inset-bottom))}
+  .framer-TV27D .framer-siicqj{height:max(760px,100svh)}
+  .framer-TV27D .framer-1hqb6js{padding-top:calc(135px + env(safe-area-inset-top))}
+  .framer-TV27D .framer-9fg3yv{min-width:0;padding-left:16px;padding-right:16px;box-sizing:border-box}
+  .hero-support-copy{font-size:15px;line-height:1.65;padding:0 8px}
+  .hero-rotator{font-size:18px}.rotator-grid{padding:0 30px}.rotator-control{width:44px;height:44px;right:-8px}
+  .framer-a3lt4s,.framer-15oljsn{min-height:48px}
+  .booking-page{grid-template-columns:minmax(0,1fr);padding:calc(115px + env(safe-area-inset-top)) var(--mobile-right) max(65px,env(safe-area-inset-bottom)) var(--mobile-left);gap:32px}
+  .booking-intro h1{font-size:clamp(34px,9vw,54px);overflow-wrap:normal}
+  .booking-panel{padding:24px 18px}.booking-panel h2{font-size:26px}
+  .booking-panel input:not([type=radio]),.booking-panel textarea{font-size:16px;line-height:1.5;min-height:48px;max-width:100%}
+  .booking-panel form>label,.booking-panel legend{font-size:14px}.booking-panel form>label span{font-size:12px}
+  .booking-note,.booking-status{font-size:13px}.booking-privacy{font-size:12px}
+  .booking-options{gap:8px}.booking-options label{max-width:100%}.booking-options span{display:flex;align-items:center;min-height:44px;font-size:12px;padding:10px 12px}
+  .booking-panel button{min-height:48px;font-size:15px}.booking-email{font-size:13px;min-height:44px}
+  .team-hero{padding-top:calc(110px + env(safe-area-inset-top));padding-bottom:100px}
+  .team-hero h1{font-size:clamp(36px,10vw,74px)}.team-intro{font-size:14px}.team-eyebrow{font-size:10px}
+  .team-portrait{inset:calc(100px + env(safe-area-inset-top)) var(--mobile-right) calc(120px + env(safe-area-inset-bottom)) var(--mobile-left);gap:18px}
+  .team-photo{height:min(45svh,420px);max-height:62%;min-height:0}.team-role{font-size:15px}.team-member-number{font-size:9px}
+  .team-bottom{left:var(--mobile-left);right:var(--mobile-right);bottom:max(20px,env(safe-area-inset-bottom));flex-direction:column;gap:7px}
+  .team-chapter{flex-direction:row;gap:14px;font-size:10px}.team-bottom>svg{display:none}
+  .team-index{gap:2px;max-width:100%}.team-index button{min-width:44px;min-height:44px;font-size:12px}
+  .expertise-hero{padding-top:calc(110px + env(safe-area-inset-top));padding-bottom:130px}.expertise-hero .expertise-eyebrow{font-size:9px}.expertise-lead{font-size:14px}.expertise-explore{font-size:14px;min-height:48px}
+  .expertise-scene{inset:calc(105px + env(safe-area-inset-top)) var(--mobile-right) calc(125px + env(safe-area-inset-bottom)) var(--mobile-left);gap:20px}
+  .expertise-copy>p{font-size:14px;line-height:1.6}.expertise-copy .expertise-eyebrow{font-size:9px}.expertise-copy li{font-size:11px;padding:6px 8px}
+  .expert-art{height:210px;flex-basis:210px}.art-caption{font-size:8px}
+  .expertise-bottom{left:var(--mobile-left);right:var(--mobile-right);bottom:max(20px,env(safe-area-inset-bottom));flex-direction:column;gap:6px}
+  .expertise-counter{flex-direction:row;gap:14px;font-size:10px}.expertise-bottom nav button{min-width:44px;min-height:44px}.expertise-bottom nav button>span:first-child{font-size:12px}
+  .team-page[data-static=true] .team-portrait,.expertise-page[data-static=true] .expertise-scene{inset:auto}
+  .team-page[data-static=true] .team-photo{height:auto;aspect-ratio:4/5;min-height:0;max-height:none}
+  .team-page[data-static=true] .team-bottom,.expertise-page[data-static=true] .expertise-bottom{inset:auto;max-width:100%;margin-left:var(--mobile-left);margin-right:var(--mobile-right)}
+  .expertise-page[data-static=true] .expert-art{height:235px;flex-basis:235px}
+}
+@media(max-width:374px){
+  .framer-TV27D .framer-1hnfgxs{grid-template-columns:minmax(0,1fr)}
+  .framer-TV27D .framer-3mexk4{height:auto;min-height:300px}
+  .booking-panel{padding:22px 14px}.booking-panel h2{font-size:24px}
+  .team-person-copy h2{font-size:28px}.team-role{font-size:14px}
+}
+@media(hover:none),(pointer:coarse){
+  .framer-3NEo4:hover .framer-12iqlct,.framer-3NEo4:focus-visible .framer-12iqlct{transform:none!important;filter:none!important}
+  .framer-3NEo4 .framer-a9i7x9,.framer-75sN2 .framer-1ow1dm0{visibility:hidden}
+  .framer-75sN2:hover .framer-t2go9u{transform:none!important}
+  .booking-panel button:hover{translate:none}
+}

@@ -70,7 +70,8 @@ def convert(node):
         text = str(node)
         return text if text.strip() else None
     if node.name in ['script','style','link']: return None
-    if node.get('id') == 'template-overlay': return None
+    if node.get('id') in ['template-overlay','__framer-badge-container','__framer-badge']: return None
+    if node.get('aria-label') == 'Made in Framer' or node.get('data-framer-name') == 'Made in Framer': return None
     index += 1
     key = index
     props = {}

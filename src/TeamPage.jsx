@@ -2,12 +2,15 @@ import React,{useEffect,useRef,useState} from 'react';
 import {ArrowDown} from 'lucide-react';
 import {TEAM_MEMBERS,TEAM_SCROLL_END,teamScrollPosition,teamPortraitPose,teamHeroPose,activeTeamMember} from './teamData';
 import './team.css';
+import {useCompactViewport} from './useCompactViewport';
+import LiquidHeroBackground from './LiquidHeroBackground';
+import SmokeCursor from './SmokeCursor';
 
 export default function TeamPage(){
   const story=useRef(null),stage=useRef(null),hero=useRef(null),portraits=useRef([]);
   const [active,setActive]=useState(-1);
   const [reduced,setReduced]=useState(()=>matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const [compact,setCompact]=useState(()=>window.innerHeight<=500);
+  const compact=useCompactViewport(680);
   const staticLayout=reduced||compact;
   const position=useRef(0),activeRef=useRef(-1);
   useEffect(()=>{
@@ -15,9 +18,9 @@ export default function TeamPage(){
     document.title='Our Team \u2014 RISE';
     if(description)description.content='Meet the people behind RISE: AI, machine learning, quality assurance, full stack development, research and data analysis.';
     const preference=matchMedia('(prefers-reduced-motion: reduce)');
-    const change=()=>setReduced(preference.matches),resize=()=>setCompact(window.innerHeight<=500);
-    preference.addEventListener('change',change);window.addEventListener('resize',resize);
-    return()=>{document.title=oldTitle;if(description)description.content=oldDescription;preference.removeEventListener('change',change);window.removeEventListener('resize',resize);};
+    const change=()=>setReduced(preference.matches);
+    preference.addEventListener('change',change);
+    return()=>{document.title=oldTitle;if(description)description.content=oldDescription;preference.removeEventListener('change',change);};
   },[]);
   useEffect(()=>{
     let frame=0,last=0,target=0,dirty=true,visible=true;
@@ -69,7 +72,9 @@ export default function TeamPage(){
     <a href="#team-story" className="team-skip">Skip to the team</a>
     <section ref={story} id="team-story" className="team-story" aria-label="The people behind RISE">
       <div ref={stage} className="team-stage" tabIndex={staticLayout?-1:0} onKeyDown={keyboard} aria-label="Scroll to meet our team. Arrow keys explore, Home returns to the introduction.">
-        <div ref={hero} id="team-hero" className="team-hero">
+        <div ref={hero} id="team-hero" className="team-hero" data-smoke-hero>
+          <LiquidHeroBackground variant="team" active={staticLayout||active<0}/>
+          <SmokeCursor active={staticLayout||active<0}/>
           <div className="team-hero-orbit" aria-hidden="true"/>
           <p className="team-eyebrow">OUR PEOPLE / OUR STRENGTH</p>
           <h1><span>Meet the people</span>{' '}<span>behind <em>RISE.</em></span></h1>
@@ -79,7 +84,7 @@ export default function TeamPage(){
         <div className="team-portraits">
           {TEAM_MEMBERS.map((member,i)=><article ref={el=>portraits.current[i]=el} key={member.slug} id={`member-${member.slug}`} className="team-portrait" data-active={active===i} aria-labelledby={`name-${member.slug}`}>
             <div className="team-photo"><img src={`/team/${member.slug}.jpeg`} alt={member.name} width="1200" height="1500" loading={i<2?'eager':'lazy'} decoding="async" style={{objectPosition:member.position}}/><span className="team-photo-mark" aria-hidden="true">RISE / 0{i+1}</span></div>
-            <div className="team-person-copy"><span className="team-member-number">THE PEOPLE BEHIND THE WORK / 0{i+1}</span><h2 id={`name-${member.slug}`}>{member.name}</h2><p className="team-role">{member.role}</p><span className="team-person-line" aria-hidden="true"/><span className="team-person-signature">Results. Innovation.<br/>Solutions. Engineering.</span></div>
+            <div className="team-person-copy"><span className="team-member-number">THE PEOPLE BEHIND THE WORK / 0{i+1}</span><h2 id={`name-${member.slug}`}>{member.nameSuffix?<>{member.name.slice(0,-member.nameSuffix.length)}<span className="team-name-suffix">{member.nameSuffix}</span></>:member.name}</h2><p className="team-role">{member.role}</p><span className="team-person-line" aria-hidden="true"/><span className="team-person-signature">Results. Innovation.<br/>Solutions. Engineering.</span></div>
           </article>)}
         </div>
         <div className="team-bottom" data-show={active>=0} inert={active<0&&!staticLayout}>

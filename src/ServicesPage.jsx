@@ -2,6 +2,9 @@ import React,{useEffect,useRef,useState} from 'react';
 import {ArrowDown,ArrowUpRight,Code2,Database,Layers,Check,GitBranch,MousePointer2,ShieldCheck} from 'lucide-react';
 import {SERVICES,servicePose,servicePosition} from './servicesData';
 import './services.css';
+import {useCompactViewport} from './useCompactViewport';
+import LiquidHeroBackground from './LiquidHeroBackground';
+import SmokeCursor from './SmokeCursor';
 
 function ServiceVisual({type}){
   if(type===0)return <div className="expert-art art-stack" aria-hidden="true">
@@ -16,16 +19,16 @@ function ServiceVisual({type}){
   return <div className="expert-art art-qa" aria-hidden="true"><div className="qa-shield"><ShieldCheck size={62} strokeWidth={1}/></div><div className="qa-panel"><div className="data-topline"><span>A BETTER RELEASE STARTS HERE</span><Code2 size={16}/></div>{['Functionality','Compatibility','User experience','Regression'].map((label,i)=><div className="qa-check" key={label} style={{'--delay':`${i*180}ms`}}><Check size={17}/><span>{label}</span><i/></div>)}<div className="qa-scan"/></div><span className="art-caption">TEST / REFINE / VALIDATE</span></div>;
 }
 
-const compactViewport=()=>window.innerHeight<=600||(window.innerWidth<810&&window.innerHeight<720);
 export default function ServicesPage(){
   const story=useRef(null),stage=useRef(null),hero=useRef(null),panels=useRef([]),position=useRef(0),current=useRef(-1);
-  const [active,setActive]=useState(-1),[staticLayout,setStatic]=useState(()=>matchMedia('(prefers-reduced-motion: reduce)').matches||compactViewport());
+  const [active,setActive]=useState(-1),[reduced,setReduced]=useState(()=>matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const compact=useCompactViewport(780),staticLayout=reduced||compact;
   useEffect(()=>{
     const oldTitle=document.title,meta=document.querySelector('meta[name="description"]'),oldDescription=meta?.content;
     document.title='What We Do — RISE';if(meta)meta.content='Full-stack development, data analytics, AI and machine learning, UI/UX design, and quality assurance for student projects and businesses.';
-    const media=matchMedia('(prefers-reduced-motion: reduce)'),update=()=>setStatic(media.matches||compactViewport());
-    media.addEventListener('change',update);window.addEventListener('resize',update);
-    return()=>{document.title=oldTitle;if(meta)meta.content=oldDescription;media.removeEventListener('change',update);window.removeEventListener('resize',update);};
+    const media=matchMedia('(prefers-reduced-motion: reduce)'),update=()=>setReduced(media.matches);
+    media.addEventListener('change',update);
+    return()=>{document.title=oldTitle;if(meta)meta.content=oldDescription;media.removeEventListener('change',update);};
   },[]);
   useEffect(()=>{
     let frame=0,last=0,target=0,dirty=true,visible=true;
@@ -70,7 +73,7 @@ export default function ServicesPage(){
     <a className="expertise-skip" href="#expertise-footer">Skip service animation</a>
     <section className="expertise-story" ref={story} aria-label="Explore what we do">
       <div className="expertise-stage" ref={stage} tabIndex={staticLayout?-1:0} onKeyDown={keyboard} aria-label="Scroll to explore services. Use arrow keys to navigate, or Home to return to the introduction.">
-        <div className="expertise-hero" ref={hero} id="expertise-intro"><div className="expertise-orbit" aria-hidden="true"/><p className="expertise-eyebrow">WHAT WE DO / BUILT AROUND YOUR IDEA</p><h1>Ideas rise.<br/><em>We make them real.</em></h1><p className="expertise-lead">Five disciplines. One collaborative team.<br/>Practical digital solutions for students and businesses.</p><button className="expertise-explore" onClick={()=>choose(0)}>Explore our expertise <ArrowDown size={16}/></button></div>
+        <div className="expertise-hero" ref={hero} id="expertise-intro" data-smoke-hero><SmokeCursor active={staticLayout||active<0}/><LiquidHeroBackground variant="services" active={staticLayout||active<0}/><div className="expertise-orbit" aria-hidden="true"/><p className="expertise-eyebrow">WHAT WE DO / BUILT AROUND YOUR IDEA</p><h1>Ideas rise.<br/><em>We make them real.</em></h1><p className="expertise-lead">Five disciplines. One collaborative team.<br/>Practical digital solutions for students and businesses.</p><button className="expertise-explore" onClick={()=>choose(0)}>Explore our expertise <ArrowDown size={16}/></button></div>
         <div className="expertise-scenes">{SERVICES.map((service,i)=><article className="expertise-scene" id={service.slug} ref={el=>panels.current[i]=el} data-active={active===i} key={service.slug} aria-labelledby={`${service.slug}-title`} style={{'--layer':SERVICES.length-i}}>
           <div className="expertise-copy"><span className="expertise-eyebrow">0{i+1} / {service.eyebrow}</span><h2 id={`${service.slug}-title`}>{service.title}</h2><p>{service.description}</p><ul>{service.deliverables.map(item=><li key={item}>{item}</li>)}</ul><span className="expertise-line">{service.line}</span></div><ServiceVisual type={i}/>
         </article>)}</div>

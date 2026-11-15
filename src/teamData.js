@@ -1,10 +1,10 @@
 export const TEAM_MEMBERS = [
-  {name:'Md Khaja Eshaq',role:'AI Engineer',slug:'md-khaja-eshaq',position:'50% 32%'},
-  {name:'M Tejeshwar',role:'ML Engineer',slug:'m-tejeshwar',position:'50% 34%'},
-  {name:'M Deepak',role:'QA Engineer',slug:'m-deepak',position:'50% 30%'},
-  {name:'M Sai Kiran',role:'Full Stack Developer',slug:'m-sai-kiran',position:'50% 36%'},
-  {name:'M Trilok',role:'ML Engineer',slug:'m-trilok',position:'50% 30%'},
-  {name:'K Jithendra',role:'Research and Data Analyst',slug:'k-jithendra',position:'50% 35%'},
+  {name:'Mohamed Khaja Eshaq',role:'AI Engineer',slug:'md-khaja-eshaq',position:'50% 32%'},
+  {name:'Mamidi Tejeshwar',role:'ML Engineer',slug:'m-tejeshwar',position:'50% 34%'},
+  {name:'Maddineni Deepak',role:'QA Engineer',slug:'m-deepak',position:'50% 30%'},
+  {name:'Miriyala Sai Kiran',role:'Full Stack Developer',slug:'m-sai-kiran',position:'50% 36%'},
+  {name:'Mabbu Trilok',role:'ML Engineer',slug:'m-trilok',position:'50% 30%'},
+  {name:'Kottala Jithendra Sesha Sai Ram',nameSuffix:'Sesha Sai Ram',role:'Research and Data Analyst',slug:'k-jithendra',position:'50% 35%'},
 ];
 
 export const TEAM_SCROLL_END=TEAM_MEMBERS.length+.25;

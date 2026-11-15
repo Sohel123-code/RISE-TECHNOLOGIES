@@ -1,0 +1,15 @@
+.team-hero,.expertise-hero{isolation:isolate;overflow:hidden}
+.liquid-hero-background{position:absolute;inset:0;z-index:-2;pointer-events:none;overflow:hidden;contain:strict;background:radial-gradient(ellipse at 12% 70%,#617d46 0,transparent 45%),radial-gradient(ellipse at 87% 25%,#455d34 0,transparent 48%),linear-gradient(140deg,#080d07,#24351b 55%,#060606)}
+.liquid-hero-background[data-variant=services]{background:radial-gradient(ellipse at 85% 70%,#617d46 0,transparent 45%),radial-gradient(ellipse at 15% 25%,#455d34 0,transparent 48%),#080d07}
+.liquid-hero-background canvas{display:block;position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .8s ease;pointer-events:none}
+.liquid-hero-background[data-renderer=webgl] canvas{opacity:.95}
+.liquid-hero-shade{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 48%,#060606ac 0,#06060660 45%,#06060622 75%),linear-gradient(to bottom,#060606bb,transparent 28%,transparent 65%,#060606 100%)}
+.team-hero-orbit,.expertise-orbit{opacity:.4}
+[data-smoke-hero]{isolation:isolate;overflow:hidden}
+.framer-siicqj[data-smoke-hero],.booking-intro[data-smoke-hero]{position:relative}
+.site-smoke-cursor{display:none;position:absolute;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none!important;user-select:none;mix-blend-mode:screen;opacity:.8;contain:strict}
+.site-smoke-cursor[data-enabled=true]{display:block}
+.framer-siicqj>.site-smoke-cursor{z-index:2}
+@media(max-width:809.98px){.liquid-hero-shade{background:radial-gradient(ellipse at 50% 45%,#060606b8,#06060650 70%),linear-gradient(to bottom,#06060699,transparent 30%,transparent 68%,#060606)}.liquid-hero-background[data-renderer=webgl] canvas{opacity:.8}}
+@media(hover:none),(pointer:coarse){.site-smoke-cursor{display:none!important}}
+@media(prefers-reduced-motion:reduce){.site-smoke-cursor{display:none!important}.liquid-hero-background canvas{transition:none}}

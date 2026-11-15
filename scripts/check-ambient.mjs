@@ -1,0 +1,72 @@
+import assert from 'node:assert/strict';
+import {build} from 'esbuild';
+import {JSDOM} from 'jsdom';
+import {mkdir,writeFile,unlink} from 'node:fs/promises';
+import path from 'node:path';
+import {pathToFileURL} from 'node:url';
+import React,{act} from 'react';
+import {createRoot} from 'react-dom/client';
+
+// Lifecycle checks with instrumented renderers, not a substitute for GPU visual QA.
+const dom=new JSDOM('<div id="root"></div>',{url:'http://localhost/team',pretendToBeVisual:true});
+const {window}=dom;Object.assign(globalThis,{window,document:window.document,IS_REACT_ACT_ENVIRONMENT:true});
+const media=new Map();
+globalThis.matchMedia=query=>{if(!media.has(query))media.set(query,{matches:query.includes('pointer: fine'),listeners:new Set(),addEventListener(_,fn){this.listeners.add(fn);},removeEventListener(_,fn){this.listeners.delete(fn);}});return media.get(query);};
+const preference=async(query,value)=>act(()=>{const m=matchMedia(query);m.matches=value;m.listeners.forEach(fn=>fn());});
+let nextFrame=0,now=1000,draws=0,released=0;
+const frames=new Map(),observers=new Set();
+globalThis.requestAnimationFrame=fn=>{frames.set(++nextFrame,fn);return nextFrame;};
+globalThis.cancelAnimationFrame=id=>frames.delete(id);
+async function advance(count=1){await act(()=>{for(let i=0;i<count;i++){now+=40;const batch=[...frames.values()];frames.clear();batch.forEach(fn=>fn(now));}});}
+globalThis.ResizeObserver=class{observe(){}disconnect(){}};
+globalThis.IntersectionObserver=class{constructor(fn){this.fn=fn;observers.add(this);}observe(target){this.target=target;this.fn([{isIntersecting:true,target}]);}disconnect(){observers.delete(this);}};
+const textures=new Set(),buffers=new Set();let floatSupport=true;
+const gl=new Proxy({FRAMEBUFFER_COMPLETE:36053,getExtension:()=>floatSupport?{}:null,checkFramebufferStatus:()=>36053,createTexture:()=>{const t={};textures.add(t);return t;},deleteTexture:t=>textures.delete(t),createFramebuffer:()=>{const b={};buffers.add(b);return b;},deleteFramebuffer:b=>buffers.delete(b),createVertexArray:()=>({}),getShaderParameter:()=>true,getProgramParameter:()=>true,drawArrays:()=>draws++,deleteProgram:()=>released++,createShader:()=>({}),createProgram:()=>({}),createBuffer:()=>({}),getUniformLocation:(_,name)=>name,getAttribLocation:()=>0},{get:(target,key)=>target[key]??(()=>{})});
+window.WebGL2RenderingContext=function(){};window.CanvasRenderingContext2D=function(){};
+window.HTMLCanvasElement.prototype.getContext=function(type){return type==='webgl2'?gl:null;};
+window.innerWidth=390;window.innerHeight=844;
+Object.defineProperty(window.HTMLElement.prototype,'clientWidth',{configurable:true,get:()=>window.innerWidth});
+Object.defineProperty(window.HTMLElement.prototype,'clientHeight',{configurable:true,get:()=>window.innerHeight});
+let hidden=false;Object.defineProperty(document,'hidden',{get:()=>hidden});
+const output=await build({stdin:{contents:"export {default as Liquid} from './src/LiquidHeroBackground.jsx'; export {default as Smoke} from './src/SmokeCursor.jsx';",resolveDir:process.cwd()},bundle:true,write:false,platform:'node',format:'esm',loader:{'.css':'empty'},external:['react'],jsx:'automatic'});
+await mkdir('.sites-runtime',{recursive:true});const file=path.resolve('.sites-runtime/ambient-check.mjs');await writeFile(file,output.outputFiles[0].text);
+const {Liquid,Smoke}=await import(pathToFileURL(file).href),root=createRoot(document.getElementById('root'));
+const render=active=>act(()=>root.render(React.createElement(Liquid,{active})));
+try{
+ await render(true);await advance(3);
+ const effect=document.querySelector('.liquid-hero-background'),canvas=effect.querySelector('canvas');
+ assert.equal(effect.dataset.renderer,'webgl');assert.ok(draws>1,'Liquid changes over time');
+ assert.ok(canvas.width*canvas.height<=461000,'Mobile rendering has a bounded pixel budget');
+ await render(false);const paused=draws;await advance(3);assert.equal(draws,paused,'Leaving the hero stops rendering');assert.equal(frames.size,0);
+ await render(true);await advance();assert.ok(draws>paused,'Returning to the hero resumes motion');
+ await act(()=>{observers.forEach(o=>o.fn([{isIntersecting:false,target:o.target}]));});assert.equal(frames.size,0,'Offscreen animation stops');
+ await act(()=>{observers.forEach(o=>o.fn([{isIntersecting:true,target:o.target}]));});await advance();
+ await preference('(prefers-reduced-motion: reduce)',true);const still=draws;await advance(3);assert.equal(draws,still,'Reduced motion retains a still frame');
+ await preference('(prefers-reduced-motion: reduce)',false);
+ await act(()=>{hidden=true;document.dispatchEvent(new window.Event('visibilitychange'));});assert.equal(frames.size,0,'Hidden tabs do not render liquid');
+ await act(()=>{hidden=false;document.dispatchEvent(new window.Event('visibilitychange'));});await advance();
+ await act(()=>canvas.dispatchEvent(new window.Event('webglcontextlost',{cancelable:true})));assert.equal(effect.dataset.renderer,'fallback');assert.equal(frames.size,0);
+ await act(()=>canvas.dispatchEvent(new window.Event('webglcontextrestored')));await advance();assert.equal(effect.dataset.renderer,'webgl');
+ const heroHost=document.getElementById('root');heroHost.getBoundingClientRect=()=>({left:20,top:20,right:20+window.innerWidth,bottom:20+window.innerHeight,width:window.innerWidth,height:window.innerHeight});
+ await act(()=>root.render(React.createElement(Smoke)));assert.ok(released>0);assert.equal(observers.size,1,'Only the hero visibility observer remains');
+ const cursor=document.querySelector('.site-smoke-cursor');assert.equal(cursor.dataset.enabled,'true');assert.equal(frames.size,0,'Idle pointer has no animation loop');
+ function move(x,type='mouse',target=document.body){const e=new window.Event('pointermove',{bubbles:true,cancelable:true});Object.assign(e,{clientX:x,clientY:80,pointerType:type});target.dispatchEvent(e);assert.equal(e.defaultPrevented,false);}
+ const beforeSmoke=draws;move(30);move(80);await advance(4);assert.ok(draws>beforeSmoke,'Moving a mouse advances the fluid simulation');await advance(20);assert.ok(frames.size>0,'The original lingering smoke is restored inside the hero');await advance(85);assert.equal(frames.size,0,'Hero smoke stops after its four-second fade');
+ move(30);move(80);await advance();move(2000);assert.equal(frames.size,0,'Leaving the hero clears the smoke immediately');
+ move(30);move(80);await advance();window.dispatchEvent(new window.Event('scroll'));assert.equal(frames.size,0,'Scrolling clears the hero smoke');
+ await act(()=>{observers.forEach(o=>o.fn([{isIntersecting:false,target:o.target}]));});move(30);move(80);assert.equal(frames.size,0,'Offscreen heroes cannot emit smoke');assert.equal(cursor.dataset.enabled,'false');
+ await act(()=>{observers.forEach(o=>o.fn([{isIntersecting:true,target:o.target}]));});
+ await act(()=>root.render(React.createElement(Smoke,{active:false})));assert.equal(textures.size,0);assert.equal(cursor.dataset.enabled,'false','Team portraits and service scenes disable hero smoke');move(30);move(80);assert.equal(frames.size,0);
+ await act(()=>root.render(React.createElement(Smoke,{active:true})));assert.equal(cursor.dataset.enabled,'true');
+ assert.ok(textures.size>0,'Fluid renderer owns its textures');
+ window.innerWidth=1920;window.dispatchEvent(new window.Event('resize'));assert.equal(textures.size,8,'Resize replaces textures without leaking them');assert.equal(buffers.size,8);
+ await act(()=>cursor.dispatchEvent(new window.Event('webglcontextlost',{cancelable:true})));assert.equal(cursor.dataset.enabled,'false');assert.equal(frames.size,0);
+ await act(()=>cursor.dispatchEvent(new window.Event('webglcontextrestored')));assert.equal(cursor.dataset.enabled,'true');assert.equal(textures.size,8,'Context recovery recreates fluid resources');
+ const input=document.createElement('input');document.body.append(input);move(100,'mouse',input);move(140,'mouse',input);assert.equal(frames.size,0,'Form entry does not emit smoke');
+ await preference('(hover: hover) and (pointer: fine)',false);assert.equal(cursor.dataset.enabled,'false');assert.equal(textures.size,0,'Touch devices release the fluid textures');move(20,'touch');move(80,'touch');assert.equal(frames.size,0,'Touch never starts a cursor loop');
+ await preference('(hover: hover) and (pointer: fine)',true);await preference('(prefers-reduced-motion: reduce)',true);assert.equal(cursor.dataset.enabled,'false');move(10);move(70);assert.equal(frames.size,0);
+ await preference('(prefers-reduced-motion: reduce)',false);move(10);move(70);await advance();await act(()=>{hidden=true;document.dispatchEvent(new window.Event('visibilitychange'));});assert.equal(frames.size,0);assert.equal(cursor.dataset.enabled,'false');
+ await act(()=>root.render(null));assert.equal(frames.size,0);assert.equal(textures.size,0);assert.equal(buffers.size,0);assert.ok([...media.values()].every(m=>m.listeners.size===0),'Preference subscriptions are cleaned up');
+ hidden=false;floatSupport=false;await act(()=>root.render(React.createElement(Smoke)));assert.equal(document.querySelector('.site-smoke-cursor').dataset.enabled,'false','Unsupported GPUs preserve the native cursor');assert.equal(frames.size,0);assert.equal(textures.size,0);
+ console.log('PASS: liquid activity/visibility gates, mobile render budget, reduced motion, context recovery; smoke movement/decay, idle/touch/form guards, tab visibility and cleanup.');
+}finally{await act(()=>root.unmount());dom.window.close();await unlink(file);}

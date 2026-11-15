@@ -7,7 +7,7 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "node scripts/check-interactions.mjs && node scripts/check-team.mjs && node scripts/check-services.mjs && node scripts/check-booking.mjs"
+    "test": "node scripts/check-interactions.mjs && node scripts/check-team.mjs && node scripts/check-services.mjs && node scripts/check-booking.mjs && node scripts/check-ambient.mjs"
   },
   "dependencies": {
     "react": "^19.2.0",

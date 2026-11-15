@@ -17,14 +17,12 @@ function collect(nodes){
 collect(template);
 const excluded=new Set([header.key,...footers.map(node=>node.key)]);
 function contentOnly(nodes){return nodes.filter(node=>typeof node==='string'||!excluded.has(node.key)).map(node=>typeof node==='string'?node:{...node,children:contentOnly(node.children)});}
-function footerLinks(node,teamLabel=false){
-  if(typeof node==='string')return teamLabel&&node.trim()==='About us'?'Team':node;
+function footerLinks(node){
+  if(typeof node==='string')return node;
   const props={...node.props};
-  const isTeam=props.href==='https://tidy-airport-868077.framer.app/about-us';
   if(props.href?.startsWith('#'))props.href=props.href==='#'?'/':`/${props.href}`;
-  if(isTeam)props.href='/team';
   if(node.props.href==='#services')props.href='/what-we-do';
-  return {...node,props,children:node.children.map(child=>footerLinks(child,teamLabel||isTeam))};
+  return {...node,props,children:node.children.map(footerLinks)};
 }
 export const homeTemplate=contentOnly(template);
 export const headerTemplate=header;

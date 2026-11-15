@@ -2,6 +2,7 @@ import React,{useEffect,useRef,useState} from 'react';
 import {ArrowUpRight,Check,LoaderCircle,Mail} from 'lucide-react';
 import {COMPANY_EMAIL,CALL_SERVICES,enquiryPayload,sendEnquiry} from './bookingApi';
 import './booking.css';
+import SmokeCursor from './SmokeCursor';
 
 const KEY='rise-call-draft-v1';
 function loadDraft(){
@@ -40,7 +41,8 @@ export default function BookCallPage(){
     }finally{clearTimeout(timeout);busy.current=false;request.current=null;}
   }
   return <main className="booking-page" id="booking-main">
-    <section className="booking-intro" data-scroll-rise>
+    <section className="booking-intro" data-scroll-rise data-smoke-hero>
+      <SmokeCursor/>
       <span className="booking-eyebrow">LET'S BUILD SOMETHING TOGETHER</span>
       <h1>Good ideas start<br/>with a <em>conversation.</em></h1>
       <p>Tell us what you have in mind. A student project, a custom application, or an idea you want to explore.</p>

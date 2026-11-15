@@ -3,6 +3,11 @@
 html{scroll-behavior:smooth;scroll-padding-top:95px}
 body{margin:0;background:#060606}
 #root{min-height:100vh}
+/* Hide template-host branding globally, including badges outside the React root. */
+#__framer-badge-container,
+#__framer-badge,
+[data-framer-name="Made in Framer"],
+a[aria-label="Made in Framer"]{display:none!important;visibility:hidden!important;pointer-events:none!important}
 a,button,[role=button]{-webkit-tap-highlight-color:transparent}
 a:focus-visible,button:focus-visible,[role=button]:focus-visible{outline:2px solid #b7cd94;outline-offset:5px}
 [role=button]{cursor:pointer}
