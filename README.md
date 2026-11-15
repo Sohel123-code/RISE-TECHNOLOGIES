@@ -118,3 +118,11 @@ The native pointer and all controls remain usable. Touch/coarse pointers and red
 `mobile-app.css` adds a compact glass header, rounded controls, fluid hero typography, stacked homepage actions, shorter section spacing, safe-area gutters, and mobile form cards with 16px inputs. A reserved 72px navigation area plus the bottom safe area prevents content from sitting under the tab bar. Sticky Team and What we do stages use the remaining viewport height; `useCompactViewport` accounts for that space before choosing an animated story or natural-flow cards. Full team names remain readable, including the smaller Sesha Sai Ram line. Short and landscape layouts remain scrollable, and browser zoom is not disabled.
 
 Automated checks cover current-page links on all routes, field-focus hiding/restoring, and compact layout selection at phone sizes from 320x568 through 430x932 and landscape 768x540. These DOM checks do not measure real browser layout or guarantee compatibility with every physical device.
+
+
+## Team name motion
+
+`TeamMemberCopy.jsx` and `team-name.css` give each name a masked, word-by-word rise and soft fade, followed by the role and a short sage accent line. The active portrait triggers the entrance in the scroll story; compact mobile cards trigger it as their copy enters the viewport. Returning to a person replays the entrance. Full names remain intact for assistive technology, the smaller Sesha Sai Ram line is preserved, and reduced-motion mode exposes all words and roles immediately. No looping text effects or layout-changing animations are used.
+
+
+Team name typography uses the bundled Inter Semibold font with tighter editorial spacing; the smaller suffix uses Inter Medium. A soft ivory-to-sage metallic highlight runs directly through the visible letters, with a quiet pause between passes. It runs only while that person's copy is revealed. Reduced-motion and forced-color modes use solid, readable text. No external fonts are requested.

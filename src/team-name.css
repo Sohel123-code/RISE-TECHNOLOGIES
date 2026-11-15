@@ -1,0 +1,24 @@
+/* One restrained typographic entrance for each person's introduction. */
+.team-page .team-person-copy .team-name-title{font-family:Inter,Geist,Arial,sans-serif;font-weight:600;letter-spacing:-.045em;font-kerning:normal;font-feature-settings:'cv11','ss01';line-height:1.1;text-wrap:balance}
+.team-page .team-name-title .team-name-suffix{font-weight:500;letter-spacing:-.015em}
+.team-name-mask{display:inline-block;vertical-align:bottom;overflow:hidden;max-width:100%;padding-bottom:.12em;margin-bottom:-.12em}
+.team-name-word{display:inline-block;transform:translateY(105%);opacity:0;filter:blur(3px);transition:transform .7s cubic-bezier(.16,1,.3,1),opacity .5s ease,filter .6s ease;transition-delay:0s}
+.team-person-copy[data-copy-visible=true] .team-name-word{transform:translateY(0);opacity:1;filter:blur(0);transition-delay:calc(var(--word-order)*65ms)}
+.team-person-copy .team-role{opacity:0;transform:translateY(9px);transition:opacity .5s ease,transform .6s cubic-bezier(.16,1,.3,1)}
+.team-person-copy[data-copy-visible=true] .team-role{opacity:1;transform:none;transition-delay:.22s}
+.team-person-copy .team-role:before{content:'';display:inline-block;width:18px;height:1px;margin-right:10px;vertical-align:middle;background:#c7dda8;transform:scaleX(0);transform-origin:left;transition:transform .65s cubic-bezier(.16,1,.3,1)}
+.team-person-copy[data-copy-visible=true] .team-role:before{transform:scaleX(1);transition-delay:.32s}
+.team-person-copy .team-person-line{transform:scaleX(0);transform-origin:left;transition:transform .75s cubic-bezier(.16,1,.3,1)}
+.team-person-copy[data-copy-visible=true] .team-person-line{transform:scaleX(1);transition-delay:.35s}
+/* The finish belongs to the actual letterforms, not an overlay on the card. */
+@supports (background-clip:text) or (-webkit-background-clip:text){
+  .team-name-word{color:transparent;-webkit-text-fill-color:transparent;background-image:linear-gradient(110deg,#f0f3e9 15%,#c7dda8 38%,#ffffff 48%,#dcebc5 58%,#f0f3e9 75%);background-size:260% 100%;background-position:100% 50%;background-clip:text;-webkit-background-clip:text}
+  .team-person-copy[data-copy-visible=true] .team-name-word{animation:team-name-polish 5.8s ease-in-out calc(.3s + var(--word-order)*65ms) infinite}
+}
+@keyframes team-name-polish{0%,12%{background-position:100% 50%}38%,100%{background-position:0% 50%}}
+@media(max-width:809.98px){.team-name-word{filter:none;transition-duration:.55s,.4s,.4s}.team-person-copy .team-role{transform:translateY(6px)}}
+@media(prefers-reduced-motion:reduce){
+  .team-person-copy .team-name-word,.team-person-copy .team-role,.team-person-copy .team-role:before,.team-person-copy .team-person-line{transform:none!important;opacity:1!important;filter:none!important;transition:none!important}
+  .team-person-copy .team-name-word{animation:none!important;background:none;color:#f0f3e9;-webkit-text-fill-color:currentColor}
+}
+@media(forced-colors:active){.team-person-copy .team-name-word{animation:none!important;background:none;color:CanvasText;-webkit-text-fill-color:currentColor}}

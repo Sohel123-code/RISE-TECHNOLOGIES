@@ -14,7 +14,8 @@ const preferences=new Map();
 globalThis.matchMedia=query=>{if(!preferences.has(query))preferences.set(query,{matches:query.includes('pointer: fine'),listeners:new Set(),addEventListener(type,fn){this.listeners.add(fn);},removeEventListener(type,fn){this.listeners.delete(fn);}});return preferences.get(query);};
 globalThis.requestAnimationFrame=fn=>setTimeout(()=>fn(performance.now()),5);globalThis.cancelAnimationFrame=clearTimeout;
 globalThis.ResizeObserver=class{observe(){}disconnect(){}};
-globalThis.IntersectionObserver=class{constructor(fn){this.fn=fn;}observe(target){this.fn([{target,isIntersecting:true}]);}disconnect(){}};
+const observedCopies=new Map();
+globalThis.IntersectionObserver=class{constructor(fn){this.fn=fn;}observe(target){this.target=target;if(target.classList.contains('team-person-copy'))observedCopies.set(target,this.fn);this.fn([{target,isIntersecting:true}]);}disconnect(){observedCopies.delete(this.target);}};
 window.innerHeight=900;window.innerWidth=1440;window.scrollY=0;
 let lastScroll,scrolledMember;
 window.scrollTo=options=>{lastScroll=options;window.scrollY=options.top;window.dispatchEvent(new window.Event('scroll'));};
@@ -39,6 +40,8 @@ try{
  for(let i=0;i<6;i++){
   const [name,role,slug]=expected[i],p=portraits[i];
   assert.equal(p.querySelector('h2').textContent,name);assert.equal(p.querySelector('.team-role').textContent,role);
+  assert.equal(p.querySelector('h2').getAttribute('aria-label'),name,'The heading exposes the full unsplit name');
+  assert.equal(p.querySelectorAll('.team-name-word').length,name.split(' ').length);
   assert.equal(p.querySelector('img').getAttribute('src'),`/team/${slug}.jpeg`);assert.equal(p.querySelector('img').alt,name);
   await access(path.resolve('public/team',`${slug}.jpeg`));
  }
@@ -49,10 +52,13 @@ try{
  assert.match(document.querySelector('.team-hero h1').textContent,/Meet the people behind RISE/);
  assert.equal(document.querySelector('.team-hero').style.getPropertyValue('--hero-opacity'),'1.0000');
  assert.ok(portraits.every(p=>opacity(p)===0),'Hero starts alone');
+ assert.ok(portraits.every(p=>p.querySelector('.team-person-copy').dataset.copyVisible==='false'),'Names wait for their introduction');
  for(let i=0;i<6;i++){
    index[i].click();assert.equal(lastScroll.behavior,'smooth');
    await until(()=>index[i].getAttribute('aria-current')==='true'&&opacity(portraits[i])===1);
    assert.equal(document.querySelectorAll('.team-portrait[data-active="true"]').length,1);
+   assert.equal(portraits[i].querySelector('.team-person-copy').dataset.copyVisible,'true');
+   assert.equal(document.querySelectorAll('.team-person-copy[data-copy-visible="true"]').length,1,'Only the current name reveals');
  }
  assert.equal(document.querySelector('.team-hero').style.getPropertyValue('--hero-opacity'),'0.0000');
  const exiting=teamPortraitPose(0,1.6),entering=teamPortraitPose(1,1.6);
@@ -69,17 +75,24 @@ try{
  stage.dispatchEvent(new window.KeyboardEvent('keydown',{key:'Home',bubbles:true,cancelable:true}));
  await until(()=>document.querySelector('.team-hero').style.getPropertyValue('--hero-opacity')==='1.0000');
  assert.equal(document.querySelectorAll('.team-index [aria-current]').length,0,'Reverse scrolling restores hero');
+ assert.equal(document.querySelectorAll('.team-person-copy[data-copy-visible="true"]').length,0,'Reversing to the hero resets name entrances');
  assert.equal(teamScrollPosition(-8000,4320,900),7);assert.equal(teamScrollPosition(200,4320,900),0);
  window.innerWidth=390;window.innerHeight=844;window.dispatchEvent(new window.Event('resize'));await settle();
  index[4].click();await until(()=>index[4].getAttribute('aria-current')==='true');
  assert.equal(page.dataset.static,'false','Portrait phones keep the animated story');
  window.innerHeight=390;window.dispatchEvent(new window.Event('resize'));await settle();
  assert.equal(page.dataset.static,'true','Short landscape screens use natural document flow');
+ await until(()=>observedCopies.size===6);
+ const copy=portraits[0].querySelector('.team-person-copy');
+ observedCopies.get(copy)([{target:copy,isIntersecting:false}]);await until(()=>copy.dataset.copyVisible==='false');
+ observedCopies.get(copy)([{target:copy,isIntersecting:true}]);await until(()=>copy.dataset.copyVisible==='true');
  for(const [width,height] of [[320,568],[360,640],[375,667],[768,540]]){window.innerWidth=width;window.innerHeight=height;window.dispatchEvent(new window.Event('resize'));await until(()=>page.dataset.static==='true');}
  index[2].click();assert.equal(scrolledMember,'member-m-deepak');
  window.innerWidth=390;window.innerHeight=844;window.dispatchEvent(new window.Event('resize'));await settle();
  const reduced=preferences.get('(prefers-reduced-motion: reduce)');reduced.matches=true;reduced.listeners.forEach(fn=>fn());await settle();
  assert.equal(page.dataset.static,'true');assert.equal(page.dataset.reduced,'true');
+ assert.ok(portraits.every(p=>p.querySelector('.team-person-copy').dataset.copyVisible==='true'),'Reduced motion immediately exposes every full name and role');
+ assert.equal(observedCopies.size,0,'Reduced motion does not observe name animations');
  await until(()=>portraits.every(p=>p.style.getPropertyValue('--person-y')===''));
  for(const p of portraits)assert.equal(p.style.getPropertyValue('--person-y'),'');
  index[5].click();assert.equal(scrolledMember,'member-k-jithendra');

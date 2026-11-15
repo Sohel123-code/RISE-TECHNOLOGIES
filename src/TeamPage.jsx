@@ -5,6 +5,7 @@ import './team.css';
 import {useCompactViewport} from './useCompactViewport';
 import LiquidHeroBackground from './LiquidHeroBackground';
 import SmokeCursor from './SmokeCursor';
+import TeamMemberCopy from './TeamMemberCopy';
 
 export default function TeamPage(){
   const story=useRef(null),stage=useRef(null),hero=useRef(null),portraits=useRef([]);
@@ -84,7 +85,7 @@ export default function TeamPage(){
         <div className="team-portraits">
           {TEAM_MEMBERS.map((member,i)=><article ref={el=>portraits.current[i]=el} key={member.slug} id={`member-${member.slug}`} className="team-portrait" data-active={active===i} aria-labelledby={`name-${member.slug}`}>
             <div className="team-photo"><img src={`/team/${member.slug}.jpeg`} alt={member.name} width="1200" height="1500" loading={i<2?'eager':'lazy'} decoding="async" style={{objectPosition:member.position}}/><span className="team-photo-mark" aria-hidden="true">RISE / 0{i+1}</span></div>
-            <div className="team-person-copy"><span className="team-member-number">THE PEOPLE BEHIND THE WORK / 0{i+1}</span><h2 id={`name-${member.slug}`}>{member.nameSuffix?<>{member.name.slice(0,-member.nameSuffix.length)}<span className="team-name-suffix">{member.nameSuffix}</span></>:member.name}</h2><p className="team-role">{member.role}</p><span className="team-person-line" aria-hidden="true"/><span className="team-person-signature">Results. Innovation.<br/>Solutions. Engineering.</span></div>
+            <TeamMemberCopy member={member} index={i} active={active===i} staticLayout={staticLayout} reduced={reduced}/>
           </article>)}
         </div>
         <div className="team-bottom" data-show={active>=0} inert={active<0&&!staticLayout}>
