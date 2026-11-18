@@ -126,3 +126,10 @@ Automated checks cover current-page links on all routes, field-focus hiding/rest
 
 
 Team name typography uses the bundled Inter Semibold font with tighter editorial spacing; the smaller suffix uses Inter Medium. A soft ivory-to-sage metallic highlight runs directly through the visible letters, with a quiet pause between passes. It runs only while that person's copy is revealed. Reduced-motion and forced-color modes use solid, readable text. No external fonts are requested.
+
+
+## Homepage scroll story
+
+The homepage keeps the same template content, images, destinations, and section order. `homeStoryMotion.js` and `home-story.css` add reversible depth, a masked heading reveal, and image parallax to existing content groups. Their outer boxes remain stable layout anchors; no duplicated panels, scroll locking, or replacement content is introduced. The hero copy eases backward and fades as scrolling brings in the next section, with a separate movement layer for the original green artwork and a thin reading-progress line.
+
+The existing scroll hooks batch these effects into event-driven animation frames, update after layout changes, and stop in hidden tabs. Phones use a smaller scale shift with no depth blur or rotation. Focused controls are fully revealed, and reduced-motion preferences restore static presentation. The homepage interaction checks verify forward/reverse motion, stable geometry, mobile limits, unchanged copy/image order, and existing accordions, navigation, and form routes.

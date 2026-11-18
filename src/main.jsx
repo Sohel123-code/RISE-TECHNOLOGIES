@@ -15,6 +15,7 @@ import './responsive.css';
 import SmokeCursor from './SmokeCursor';
 import MobileNavigation from './MobileNavigation';
 import './mobile-app.css';
+import './home-story.css';
 
 // Original markup, classes, text, inline styles and assets are preserved.
 // This layer restores React interactions without redesigning the template.

@@ -57,6 +57,7 @@ entrance.getClientRects=()=>[entrance.getBoundingClientRect()];
 entrance.getBoundingClientRect=()=>({top:layoutTop+(entrance.matches(':focus-within')?0:parseFloat(entrance.style.getPropertyValue('--scroll-rise-y'))||0),height:180,width:900,left:0});
 window.dispatchEvent(new dom.window.Event('scroll'));await settle();
 assert.equal(entrance.style.getPropertyValue('--scroll-rise-y'),'92.00px');
+assert.equal(document.querySelector('[data-site-footer] [data-home-depth]'),null,'Extra depth is scoped to home content');
 layoutTop=700;window.dispatchEvent(new dom.window.Event('scroll'));await settle();
 const midway=parseFloat(entrance.style.getPropertyValue('--scroll-rise-y'));
 assert.ok(midway>0&&midway<92,'Section rises in proportion to scrolling');
@@ -79,6 +80,8 @@ assert.equal(rotator.querySelector('.rotator-word').textContent,'From your first
 document.querySelector('[aria-label="Pause hero text animation"]').click();await settle();
 assert.equal(rotator.dataset.running,'false');
 assert.ok(document.querySelector('[aria-label="Play hero text animation"]'));
+assert.equal(document.querySelector('[data-home-scene]'),null,'Homepage keeps its original flowing sections');
+assert.ok(document.querySelector('[data-home-depth]'),'Previous homepage depth effects remain enabled');
 const faq=document.querySelector('.framer-5gFt0');
 const question=faq.querySelector('[role="button"]');
 assert.equal(question.getAttribute('aria-expanded'),'false');
@@ -164,6 +167,7 @@ for(const anchor of document.querySelectorAll('a[href^="#"]')){
 function chromeMarkup(selector){
  const element=document.querySelector(selector).cloneNode(true);
  element.querySelectorAll('[aria-current]').forEach(node=>node.removeAttribute('aria-current'));
+ element.querySelectorAll('[data-scroll-rise]').forEach(node=>{node.style.removeProperty('--scroll-rise-y');node.style.removeProperty('--scroll-rise-opacity');if(!node.getAttribute('style'))node.removeAttribute('style');});
  return element.innerHTML;
 }
 assert.equal(document.querySelectorAll('[data-site-header]').length,1);

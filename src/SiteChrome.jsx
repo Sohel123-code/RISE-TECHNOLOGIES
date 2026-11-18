@@ -16,5 +16,7 @@ export function SiteHeader({Renderer}){
 }
 
 export function SiteFooter({Renderer}){
-  return <div className="site-footer-template framer-ffAti" data-site-footer>{footerTemplates.map(node=><Renderer key={node.key} node={node}/>)}</div>;
+  return <div className="site-footer-template framer-ffAti" data-site-footer>
+    {footerTemplates.map(node=><Renderer key={node.key} node={node}/>)}
+  </div>;
 }

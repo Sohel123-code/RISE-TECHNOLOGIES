@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import {homeHeroPose} from './homeStoryMotion.js';
 
 /** Motion enhances the existing template without owning layout or content. */
 export function useHomepageMotion() {
@@ -7,6 +8,8 @@ export function useHomepageMotion() {
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
     const fine = matchMedia('(hover: hover) and (pointer: fine)');
     const hero = document.querySelector('[data-framer-name="Hero Section"]');
+    const surface=document.querySelector('.framer-TV27D');
+    const heroVariables=['--hero-drift','--home-hero-opacity','--home-hero-scale','--home-hero-y','--home-art-y'];
     const cards = [...document.querySelectorAll('[data-motion-card]')];
     let scrollFrame = 0, pointerFrame = 0, card = null, button = null, point = null;
 
@@ -22,9 +25,16 @@ export function useHomepageMotion() {
     }
     function updateScroll() {
       scrollFrame=0;
-      const y=window.scrollY || 0;
-      if(hero && !reduced.matches)hero.style.setProperty('--hero-drift',`${Math.min(y*.065,32)}px`);
-      else hero?.style.removeProperty('--hero-drift');
+      if(document.hidden)return;
+      if(hero && !reduced.matches){
+        const r=hero.getBoundingClientRect(),focused=hero.matches(':focus-within');
+        const pose=homeHeroPose(focused?0:r.top,r.height,window.innerWidth<810);
+        hero.style.setProperty('--home-hero-opacity',pose.opacity.toFixed(4));hero.style.setProperty('--home-hero-scale',pose.scale.toFixed(4));
+        hero.style.setProperty('--home-hero-y',`${pose.y.toFixed(2)}px`);hero.style.setProperty('--home-art-y',`${pose.artY.toFixed(2)}px`);
+        const distance=Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
+        surface?.style.setProperty('--home-reading-progress',String(Math.max(0,Math.min(1,window.scrollY/distance))));
+        surface?.setAttribute('data-home-story','');
+      }else{heroVariables.forEach(key=>hero?.style.removeProperty(key));surface?.removeAttribute('data-home-story');surface?.style.removeProperty('--home-reading-progress');}
     }
     function scheduleScroll(){if(!scrollFrame)scrollFrame=requestAnimationFrame(updateScroll);}
     function updatePointer(){
@@ -61,6 +71,9 @@ export function useHomepageMotion() {
     cards.forEach(el=>visibleCards.observe(el));
     window.addEventListener('scroll',scheduleScroll,{passive:true});
     window.addEventListener('resize',scheduleScroll,{passive:true});
+    hero?.addEventListener('focusin',scheduleScroll);hero?.addEventListener('focusout',scheduleScroll);
+    const geometry=new ResizeObserver(scheduleScroll);if(surface)geometry.observe(surface);
+    const visibility=()=>{if(document.hidden){cancelAnimationFrame(scrollFrame);scrollFrame=0;}else scheduleScroll();};document.addEventListener('visibilitychange',visibility);
     document.addEventListener('pointermove',move,{passive:true});
     document.addEventListener('pointerleave',resetPointer);
     window.addEventListener('blur',resetPointer);
@@ -71,7 +84,8 @@ export function useHomepageMotion() {
       window.removeEventListener('scroll',scheduleScroll);window.removeEventListener('resize',scheduleScroll);
       document.removeEventListener('pointermove',move);document.removeEventListener('pointerleave',resetPointer);window.removeEventListener('blur',resetPointer);
       reduced.removeEventListener('change',preferences);fine.removeEventListener('change',preferences);
-      root.classList.remove('motion-reduced');hero?.style.removeProperty('--hero-drift');
+      geometry.disconnect();document.removeEventListener('visibilitychange',visibility);hero?.removeEventListener('focusin',scheduleScroll);hero?.removeEventListener('focusout',scheduleScroll);
+      root.classList.remove('motion-reduced');heroVariables.forEach(key=>hero?.style.removeProperty(key));surface?.removeAttribute('data-home-story');surface?.style.removeProperty('--home-reading-progress');
     };
   },[]);
 }
